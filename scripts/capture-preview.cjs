@@ -4,12 +4,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const process = require('node:process');
 
-function loadPuppeteer() {
+function loadPlaywright() {
   try {
-    return require('puppeteer');
+    return require('playwright');
   } catch (error) {
     try {
-      return require('/usr/local/lib/node_modules/puppeteer');
+      return require('/usr/local/lib/node_modules/playwright');
     } catch {
       throw error;
     }
@@ -65,7 +65,7 @@ function parseArgs(argv) {
     }
   }
 
-  if (!['jpeg', 'png', 'webp'].includes(options.format)) {
+  if (!['jpeg', 'png'].includes(options.format)) {
     throw new Error(`Unsupported format: ${options.format}`);
   }
 
@@ -91,8 +91,8 @@ Options:
   --output    Output file path
   --width     Viewport width
   --height    Viewport height
-  --format    jpeg | png | webp (default: jpeg)
-  --quality   JPEG/WebP quality 0-100 (default: 90)
+  --format    jpeg | png (default: jpeg)
+  --quality   JPEG quality 0-100 (default: 90)
   --delay     Delay in milliseconds before capture (default: 1200)
   --selector  CSS selector to wait for and capture (default: body)
   --full-page Capture the full page instead of the selector region
@@ -101,36 +101,27 @@ Options:
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  const puppeteer = loadPuppeteer();
+  const { chromium } = loadPlaywright();
 
   fs.mkdirSync(path.dirname(options.output), { recursive: true });
 
-  const browser = await puppeteer.launch({
+  const browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   try {
     const page = await browser.newPage();
-    await page.setViewport({
+    await page.setViewportSize({
       width: options.width,
       height: options.height,
-      deviceScaleFactor: 1,
     });
-    await page.goto(options.url, { waitUntil: 'networkidle0' });
+    await page.goto(options.url, { waitUntil: 'networkidle' });
 
     if (options.delayMs > 0) {
       await new Promise((resolve) => {
         setTimeout(resolve, options.delayMs);
       });
-    }
-
-    const target = options.fullPage
-      ? page
-      : await page.waitForSelector(options.selector, { timeout: 15000 });
-
-    if (!target) {
-      throw new Error(`Could not find selector: ${options.selector}`);
     }
 
     const screenshotOptions = {
@@ -148,6 +139,8 @@ async function main() {
         fullPage: true,
       });
     } else {
+      const target = page.locator(options.selector).first();
+      await target.waitFor({ state: 'visible', timeout: 15000 });
       await target.screenshot(screenshotOptions);
     }
 
@@ -169,7 +162,7 @@ async function main() {
 main().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(
-    `${message}\nHint: ensure Chrome is available and PUPPETEER_CACHE_DIR points to the shared browser cache.`,
+    `${message}\nHint: ensure Chromium is available and PLAYWRIGHT_BROWSERS_PATH points to the shared browser cache.`,
   );
   process.exit(1);
 });

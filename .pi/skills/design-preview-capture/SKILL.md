@@ -1,6 +1,6 @@
 ---
 name: design-preview-capture
-description: Use when a design app created from this template needs a generated screenshot preview image. Uses the bundled scripts/capture-preview.cjs Puppeteer helper instead of writing ad hoc screenshot code.
+description: Use when a design app created from this template needs a generated screenshot preview image. Uses the bundled scripts/capture-preview.cjs Playwright helper instead of writing ad hoc screenshot code.
 ---
 
 # Design Preview Capture

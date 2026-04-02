@@ -10,7 +10,7 @@ For design tasks, keep the result minimalist and lightweight.
 Use the repository script:
 
 ```bash
-npm run capture:preview -- --url http://127.0.0.1:5173 --output .codly/design-preview.png --width 1200 --height 900 --format png
+npm run capture:preview -- --output .codly/design-preview.png --width 1200 --height 900 --format png
 ```
 
 Rules:

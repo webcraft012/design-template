@@ -18,7 +18,7 @@ function loadPuppeteer() {
 
 function parseArgs(argv) {
   const options = {
-    url: 'http://127.0.0.1:4173',
+    url: 'http://127.0.0.1:5173',
     output: path.resolve(process.cwd(), 'preview.jpeg'),
     width: 1440,
     height: 1024,
@@ -84,7 +84,7 @@ function printHelp() {
   console.log(`capture-preview
 
 Usage:
-  npm run capture:preview -- --url http://127.0.0.1:5173 --output .codly/design-preview.png --width 1200 --height 900 --format png
+  npm run capture:preview -- --output .codly/design-preview.png --width 1200 --height 900 --format png
 
 Options:
   --url       Page URL to capture

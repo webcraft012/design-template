@@ -18,7 +18,7 @@ function loadPlaywright() {
 
 function parseArgs(argv) {
   const options = {
-    url: 'http://127.0.0.1:5173',
+    url: null,
     output: path.resolve(process.cwd(), 'preview.jpeg'),
     width: 1440,
     height: 1024,
@@ -80,6 +80,14 @@ function parseArgs(argv) {
   return options;
 }
 
+function getCandidateUrls(explicitUrl) {
+  if (explicitUrl) {
+    return [explicitUrl];
+  }
+
+  return ['http://localhost:5173', 'http://127.0.0.1:5173'];
+}
+
 function printHelp() {
   console.log(`capture-preview
 
@@ -100,6 +108,10 @@ Options:
 }
 
 async function main() {
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH) {
+    process.env.PLAYWRIGHT_BROWSERS_PATH = '/opt/playwright';
+  }
+
   const options = parseArgs(process.argv.slice(2));
   const { chromium } = loadPlaywright();
 
@@ -116,7 +128,25 @@ async function main() {
       width: options.width,
       height: options.height,
     });
-    await page.goto(options.url, { waitUntil: 'networkidle' });
+    let resolvedUrl = null;
+    let lastError = null;
+
+    for (const candidateUrl of getCandidateUrls(options.url)) {
+      try {
+        await page.goto(candidateUrl, {
+          waitUntil: 'networkidle',
+          timeout: 15000,
+        });
+        resolvedUrl = candidateUrl;
+        break;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    if (!resolvedUrl) {
+      throw lastError || new Error('Could not connect to the local preview URL.');
+    }
 
     if (options.delayMs > 0) {
       await new Promise((resolve) => {
@@ -148,7 +178,7 @@ async function main() {
       JSON.stringify({
         ok: true,
         output: options.output,
-        url: options.url,
+        url: resolvedUrl,
         width: options.width,
         height: options.height,
         format: options.format,
@@ -162,7 +192,7 @@ async function main() {
 main().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(
-    `${message}\nHint: ensure Chromium is available and PLAYWRIGHT_BROWSERS_PATH points to the shared browser cache.`,
+    `${message}\nHint: ensure Chromium is available in the sandbox, PLAYWRIGHT_BROWSERS_PATH is set at the sandbox level, and the dev server is reachable on localhost:5173.`,
   );
   process.exit(1);
 });

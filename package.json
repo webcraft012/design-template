@@ -8,12 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "capture:preview": "node scripts/capture-preview.cjs",
-    "remotion:studio": "remotion studio remotion/index.ts",
     "remotion:render": "remotion render remotion/index.ts MyComposition out/video.mp4"
   },
   "dependencies": {
-    "@remotion/cli": "^4.0.443",
     "@tailwindcss/vite": "^4.2.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

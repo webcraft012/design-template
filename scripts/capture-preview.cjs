@@ -148,6 +148,10 @@ async function main() {
       throw lastError || new Error('Could not connect to the local preview URL.');
     }
 
+    await page.evaluate(() => {
+      document.documentElement.style.zoom = '1.2';
+    });
+
     if (options.delayMs > 0) {
       await new Promise((resolve) => {
         setTimeout(resolve, options.delayMs);

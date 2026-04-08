@@ -23,3 +23,9 @@ out
 *.njsproj
 *.sln
 *.sw?
+
+# Local Codly artifacts (root `.codly/`)
+.codly/**/*.jsonl
+.codly/**/*.png
+.codly/**/*.jpeg
+.codly/**/*.mp4

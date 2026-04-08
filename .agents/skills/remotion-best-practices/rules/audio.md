@@ -7,6 +7,10 @@ metadata:
 
 # Using audio in Remotion
 
+Official overview: [Using audio](https://www.remotion.dev/docs/using-audio).
+
+For ready-to-use CDN URLs (beats and opt-in tracks), see [available-audio.md](./available-audio.md).
+
 ## Prerequisites
 
 First, the @remotion/media package needs to be installed.

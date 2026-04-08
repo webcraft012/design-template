@@ -25,6 +25,10 @@ When needing to visualize audio (spectrum bars, waveforms, bass-reactive effects
 
 When needing to use sound effects, load the [./rules/sound-effects.md](./rules/sound-effects.md) file for more information.
 
+## Available audio (CDN)
+
+When you need a music bed or beat URL for a composition, load [./rules/available-audio.md](./rules/available-audio.md). It lists approved CDN tracks and notes which require an explicit user request. Implementation details follow [Remotion: Using audio](https://www.remotion.dev/docs/using-audio) and [rules/audio.md](rules/audio.md).
+
 ## How to use
 
 Read individual rule files for detailed explanations and code examples:
@@ -33,6 +37,7 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/animations.md](rules/animations.md) - Fundamental animation skills for Remotion
 - [rules/assets.md](rules/assets.md) - Importing images, videos, audio, and fonts into Remotion
 - [rules/audio.md](rules/audio.md) - Using audio and sound in Remotion - importing, trimming, volume, speed, pitch
+- [rules/available-audio.md](rules/available-audio.md) - Curated CDN beats and special audio (see file for usage rules)
 - [rules/calculate-metadata.md](rules/calculate-metadata.md) - Dynamically set composition duration, dimensions, and props
 - [rules/can-decode.md](rules/can-decode.md) - Check if a video can be decoded by the browser using Mediabunny
 - [rules/charts.md](rules/charts.md) - Chart and data visualization patterns for Remotion (bar, pie, line, stock charts)

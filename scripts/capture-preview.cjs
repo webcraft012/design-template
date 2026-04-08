@@ -27,6 +27,7 @@ function parseArgs(argv) {
     delayMs: 1200,
     selector: 'body',
     fullPage: false,
+    deviceScaleFactor: 2,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -59,6 +60,9 @@ function parseArgs(argv) {
       index += 1;
     } else if (arg === '--full-page') {
       options.fullPage = true;
+    } else if (arg === '--dpr' && next) {
+      options.deviceScaleFactor = Number.parseFloat(next);
+      index += 1;
     } else if (arg === '--help') {
       printHelp();
       process.exit(0);
@@ -75,6 +79,13 @@ function parseArgs(argv) {
 
   if (!Number.isFinite(options.height) || options.height <= 0) {
     throw new Error(`Invalid height: ${options.height}`);
+  }
+
+  if (
+    !Number.isFinite(options.deviceScaleFactor) ||
+    options.deviceScaleFactor <= 0
+  ) {
+    throw new Error(`Invalid deviceScaleFactor: ${options.deviceScaleFactor}`);
   }
 
   return options;
@@ -104,6 +115,7 @@ Options:
   --delay     Delay in milliseconds before capture (default: 1200)
   --selector  CSS selector to wait for and capture (default: body)
   --full-page Capture the full page instead of the selector region
+  --dpr       Device scale factor for sharper bitmaps (default: 2)
 `);
 }
 
@@ -122,12 +134,16 @@ async function main() {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
+  let context = null;
   try {
-    const page = await browser.newPage();
-    await page.setViewportSize({
-      width: options.width,
-      height: options.height,
+    context = await browser.newContext({
+      viewport: {
+        width: options.width,
+        height: options.height,
+      },
+      deviceScaleFactor: options.deviceScaleFactor,
     });
+    const page = await context.newPage();
     let resolvedUrl = null;
     let lastError = null;
 
@@ -185,10 +201,14 @@ async function main() {
         url: resolvedUrl,
         width: options.width,
         height: options.height,
+        deviceScaleFactor: options.deviceScaleFactor,
         format: options.format,
       }),
     );
   } finally {
+    if (context) {
+      await context.close();
+    }
     await browser.close();
   }
 }

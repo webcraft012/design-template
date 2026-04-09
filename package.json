@@ -23,7 +23,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@remotion/cli": "^4.0.443",
     "@remotion/eslint-plugin": "4.0.443",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

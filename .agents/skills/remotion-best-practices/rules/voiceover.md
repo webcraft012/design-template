@@ -7,7 +7,7 @@ metadata:
 
 # Adding AI voiceover to a Remotion composition
 
-Use ElevenLabs TTS to generate speech audio per scene, then use [`calculateMetadata`](./calculate-metadata) to dynamically size the composition to match the audio.
+Use a tool TTS to generate speech audio per scene, then use [`calculateMetadata`](./calculate-metadata) to dynamically size the composition to match the audio.
 
 ## Prerequisites
 
@@ -27,31 +27,12 @@ Create a script that reads the config, calls the ElevenLabs API for each scene, 
 
 The core API call for a single scene:
 
-```ts title="generate-voiceover.ts"
-const response = await fetch(
-  `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-  {
-    method: "POST",
-    headers: {
-      "xi-api-key": process.env.ELEVENLABS_API_KEY!,
-      "Content-Type": "application/json",
-      Accept: "audio/mpeg",
-    },
-    body: JSON.stringify({
-      text: "Welcome to the show.",
-      model_id: "eleven_multilingual_v2",
-      voice_settings: {
-        stability: 0.5,
-        similarity_boost: 0.75,
-        style: 0.3,
-      },
-    }),
-  },
-);
+use generate_voice_TTS tool to geneerate the voice over
 
 const audioBuffer = Buffer.from(await response.arrayBuffer());
 writeFileSync(`public/voiceover/${compositionId}/${scene.id}.mp3`, audioBuffer);
-```
+
+````
 
 ## Dynamic composition duration with calculateMetadata
 
@@ -84,7 +65,7 @@ export const calculateMetadata: CalculateMetadataFunction<Props> = async ({
     durationInFrames: Math.ceil(sceneDurations.reduce((sum, d) => sum + d, 0)),
   };
 };
-```
+````
 
 The computed `sceneDurations` are passed into the component via a `voiceover` prop so the component knows how long each scene should be.
 

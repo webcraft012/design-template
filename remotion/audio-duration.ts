@@ -18,7 +18,7 @@ export const getAudioDurationInFrames = async ({
   src: string;
   fps: number;
 }) => {
-  const durationInSeconds = (await getAudioDurationInSeconds(src)) + 0.5;
+  const durationInSeconds = await getAudioDurationInSeconds(src);
   return Math.ceil(durationInSeconds * fps);
 };
 

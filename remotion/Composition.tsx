@@ -21,7 +21,7 @@ export type MyCompositionProps = {
   sceneDurations?: number[];
 };
 
-/** CRITICAL: Compute `sceneDurations` in `Root.tsx` with `./audio-duration.ts`, then keep scene files focused on visuals. */
+/** CRITICAL: FOR VOICEOVER audio, Compute `sceneDurations` in `Root.tsx` with `./audio-duration.ts`, then keep scene files focused on visuals. */
 export const MyComposition: FC<MyCompositionProps> = ({
   sceneAudio = DEFAULT_SCENE_AUDIO,
   audioDurationsInFrames = [90, 90],

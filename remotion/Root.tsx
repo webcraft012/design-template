@@ -4,6 +4,7 @@ import { Composition } from "remotion";
 import {
   DEFAULT_SCENE_AUDIO,
   MyComposition,
+  SCENE_TRANSITION_DURATION_IN_FRAMES,
   type MyCompositionProps,
 } from "./Composition";
 import { getTotalDurationInFrames } from "./audio-duration";
@@ -18,6 +19,7 @@ const calculateMetadata: CalculateMetadataFunction<MyCompositionProps> = async (
   const { sceneDurations, totalDurationInFrames } = await getTotalDurationInFrames({
     audioFiles: sceneAudio,
     fps: FPS,
+    overlapFrames: SCENE_TRANSITION_DURATION_IN_FRAMES,
   });
 
   return {

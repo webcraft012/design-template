@@ -1,5 +1,7 @@
 import { ALL_FORMATS, Input, UrlSource } from "mediabunny";
 
+const TOTAL_DURATION_BUFFER_IN_SECONDS = 0.5;
+
 export const getAudioDurationInSeconds = async (src: string) => {
   const input = new Input({
     formats: ALL_FORMATS,
@@ -30,24 +32,38 @@ export const getSceneDurationsInFrames = async ({
   fps: number;
 }) => {
   return Promise.all(
-    audioFiles.map((src) => getAudioDurationInFrames({ src, fps }))
+    audioFiles.map((src) => getAudioDurationInFrames({ src, fps })),
   );
 };
 
 export const getTotalDurationInFrames = async ({
   audioFiles,
   fps,
+  sceneStartOffsetsInFrames = [],
+  overlapFrames = 0,
 }: {
   audioFiles: string[];
   fps: number;
+  sceneStartOffsetsInFrames?: number[];
+  overlapFrames?: number;
 }) => {
-  const sceneDurations = await getSceneDurationsInFrames({ audioFiles, fps });
+  const audioDurationsInFrames = await getSceneDurationsInFrames({
+    audioFiles,
+    fps,
+  });
+  const sceneDurations = audioDurationsInFrames.map((duration, index) => {
+    return duration + (sceneStartOffsetsInFrames[index] ?? 0);
+  });
+  const totalSceneFrames = sceneDurations.reduce((sum, duration) => {
+    return sum + duration;
+  }, 0);
+  const totalOverlapFrames = Math.max(0, audioFiles.length - 1) * overlapFrames;
+  const totalBufferFrames = Math.ceil(TOTAL_DURATION_BUFFER_IN_SECONDS * fps);
 
   return {
+    audioDurationsInFrames,
     sceneDurations,
-    totalDurationInFrames: sceneDurations.reduce(
-      (sum, duration) => sum + duration,
-      0
-    ),
+    totalDurationInFrames:
+      totalSceneFrames - totalOverlapFrames + totalBufferFrames,
   };
 };
